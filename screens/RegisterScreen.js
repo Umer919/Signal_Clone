@@ -3,16 +3,39 @@ import React, { useState } from "react";
 import { StyleSheet,  View ,Image, KeyboardAvoidingView} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Button, Text, Input } from "react-native-elements";
+import { auth } from "../firebase";
+
 
 
 
 const RegisterScreen = ({ navigation }) => {
 
     const [name, setName] = useState("");
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [imageUrl, setImageUrl] = useState("");
+    
+
+  const register = () => {
+    auth.createUserWithEmailAndPassword(email, password)
+    .then(authUser => {
+     authUser.user.updateProfile({
+
+       displayName: name,
+       photoURL:
+              imageUrl || 
+              
+              'https://blog.mozilla.org/internetcitizen/files/2018/08/signal-logo.png',
+
+
+     })
+     
+
+
+    })
+    .catch((error) => alert(error.message));
+
+  };
   
     return (
         <KeyboardAvoidingView behavior='padding' style={styles.container}> 
@@ -29,11 +52,13 @@ const RegisterScreen = ({ navigation }) => {
                   onChangeText={(text) => setPassword(text)} /> 
                     <Input placeholder="ImageURL" autoFocus type="Text" value={imageUrl}
                   onChangeText={(text) => setImageUrl(text)} />
+
+                  
                   
 
               </View>
            
-            <Button onPress={() => navigation.navigate("Register")} containerStyle={styles.button} type="outline" title="Register" />
+            <Button onPress={register} containerStyle={styles.button} type="outline" title="Register" />
             <View style={{ height: 100}} />
         </KeyboardAvoidingView>
     )
